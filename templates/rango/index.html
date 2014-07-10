@@ -1,0 +1,37 @@
+{% extends 'rango/base.html' %}
+
+{% load static %}
+
+{% block title %}Rango{% endblock %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+    <h1> Rango says Hello {{ user.username }} <h1>
+    {% else %}
+        <h1> Rango says Hello World <h1>
+    {% endif %}
+         
+     <h1>Rango says ... these are the top 5 sites by likes</h1>
+     {% if categories %}
+          <ul>
+          {% for category in categories %}
+              <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+          {% endfor %}
+          </ul>
+      {% else %}
+          <strong>There are no categories present.</strong>
+      {% endif %}
+
+      <h1>Rango says ... these are the top 5 sites by Views</h1>
+
+      {% if categories %}
+           <ul>
+           {% for category in topviews_list %}
+              <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+           {% endfor %}
+           </ul>
+       {% else %}
+            <strong>There are no categories present.</strong>
+       {% endif %}
+{% endblock %}
