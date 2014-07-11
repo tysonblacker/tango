@@ -12,35 +12,39 @@ from datetime import datetime
 def index(request):
     context = RequestContext(request)
     category_list = Category.objects.order_by('-likes')[:5]
-    topviews_list = Category.objects.order_by('-views')[:5]
-    context_dict = {'categories': category_list, 'topviews_list': topviews_list}
+    page_list = Page.objects.order_by('-views')[:5]
+    context_dict = {'categories': category_list, 'pages': page_list}
     #context_dict = {'boldmessage': "I am a bold font from the context"}
     for category in category_list:
         category.url = category.name.replace(' ','_')
-    for category in topviews_list:
-        category.url = category.name.replace(' ','_')
-    response = render_to_response('rango/index.html', context_dict, context)
+    """ for page in page_list:
+        page. = page.t.replace(' ','_') """
 
-    
-    visits = int(request.COOKIES.get('visits', '0'))
-    print visits
+      
+    if request.session.get('last_visit'):
+        last_visit_time = request.session.get('last_visit')
+        visits = request.session.get('visits',0)
+        print last_visit_time
+        print visits
 
-    if 'last_visit' in request.COOKIES:
-        last_visit = request.COOKIES['last_visit']
-        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
-        if (datetime.now() - last_visit_time).days > 0:
-            response.set_cookie('visits', visits+1)
-            response.set_cookie('last_visit', datetime.now())
+        if (datetime.now() - datetime.strptime(last_visit_time[:-7],
+                                               "%Y-%m-%d %H:%M:%S")).seconds > 5:
+            request.session['visits'] = visits + 1
+            request.session['last_visit'] = str(datetime.now())
     else:
-        response.set_cookie('last_visit', datetime.now())
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = 1
 
-    return response
-
+    return render_to_response('rango/index.html', context_dict, context)
+ 
 
 def about(request):
     context = RequestContext(request)
+    ##request.session.get('visits',0)
     image_name = "rango{0}.jpg".format(randint(1,3))
-    context_dict = {'boldmessage': "blah blah blah", 'image_name': image_name}
+    context_dict = {'boldmessage': "blah blah blah", 'image_name': image_name, 
+                    'visits': request.session.get('visits',0) }
+    print context_dict
     return render_to_response('rango/about.html', context_dict, context)
 
 
@@ -126,7 +130,7 @@ def register(request):
             profile.save()
             registered = True
         else:
-            print user_form.errors, profile_form_errors
+            print user_form.errors, profile_form.errors
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
@@ -139,6 +143,9 @@ def register(request):
 
 def user_login(request):
     context = RequestContext(request)
+    context_dict = {}
+    context_dict['bad_details'] = False
+    context_dict['account_disabled'] = False
     
     if request.method == 'POST':
         username = request.POST['username']
@@ -150,13 +157,15 @@ def user_login(request):
                 login(request, user)
                 return HttpResponseRedirect('/rango/')
             else: 
-                return HttpResponse("Your Rango account is disabled")         
+                context_dict['account_disabled'] = True
+                return render_to_response('rango/login.html', context_dict, context)
 
         else:
             print "Invalid login details: {0} {1}".format(username, password)
-            return HttpResponse("Invalid login details supplied")
+            context_dict['bad_details'] = True
+            return render_to_response('rango/login.html', context_dict, context)
     else:
-        return render_to_response('rango/login.html', {}, context)
+        return render_to_response('rango/login.html', context_dict, context)
 
 
 @login_required

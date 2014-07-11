@@ -4,8 +4,9 @@
 {% block title %}About{% endblock %}
 
 {% block body_block %}
-     <h1>Rango says ...</h1>
-     hello world! <strong>{{ boldmessage }}</strong><br />
-     <a href="/rango/">Index Page</a><br />
+   <div class="hero-unit">
+     <h1>About Rango</h1>
+     This is <strong>Rango's about page</strong><br />
+     You have been here <strong>{{ visits }}</strong> times <br />
      <img src="{% static image_name %}" alt="Picture of Rango" />
 {% endblock %}

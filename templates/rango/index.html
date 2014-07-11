@@ -5,14 +5,12 @@
 {% block title %}Rango{% endblock %}
 
 {% block body_block %}
-
-    {% if user.is_authenticated %}
-    <h1> Rango says Hello {{ user.username }} <h1>
-    {% else %}
-        <h1> Rango says Hello World <h1>
-    {% endif %}
-         
-     <h1>Rango says ... these are the top 5 sites by likes</h1>
+  <div class="hero-unit">
+     <h1>Rango's top 5s<h1>
+  </div>
+  <div class="row-fluid">
+   <div class="span6">    
+     <h2>Top 5 Categories</h2>
      {% if categories %}
           <ul>
           {% for category in categories %}
@@ -22,16 +20,19 @@
       {% else %}
           <strong>There are no categories present.</strong>
       {% endif %}
+   </div> <!--span6 -->
+   <div class="span6">
+      <h2>Top 5 Pages</h2>
 
-      <h1>Rango says ... these are the top 5 sites by Views</h1>
-
-      {% if categories %}
+      {% if pages %}
            <ul>
-           {% for category in topviews_list %}
-              <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+           {% for page in pages %}
+              <li><a href="{{ page.url }}">{{ page.title }}</a>  {{page.category}} Views: {{ page.views }}</li>
            {% endfor %}
            </ul>
        {% else %}
             <strong>There are no categories present.</strong>
        {% endif %}
+     </div> <!-- span 6 -->
+   </div>
 {% endblock %}
