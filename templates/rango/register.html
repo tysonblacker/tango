@@ -19,8 +19,8 @@
              {{ field.help_text }} <br />
              {{ field }} <br />
              {% endfor %}
-             {{ profile_form_visible_fields }}
-             {% for fields in profile_form.visible_fields %}
+
+             {% for field in profile_form.visible_fields %}
              {{ field.errors }}
              {{ field.help_text }} <br />
              {{ field }} <br />

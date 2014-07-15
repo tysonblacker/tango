@@ -36,7 +36,7 @@ class PageForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     username = forms.CharField(help_text="Please enter a username")
     email = forms.CharField(help_text="Please your email")
-    password = forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput(), help_text="Please enter a password.")
 
     class Meta:
         model = User

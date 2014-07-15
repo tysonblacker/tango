@@ -7,13 +7,16 @@ from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from rango.bing_search import run_query
 
 
 def index(request):
     context = RequestContext(request)
+    
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
     context_dict = {'categories': category_list, 'pages': page_list}
+    context_dict['cat_list'] = get_category_list()
     #context_dict = {'boldmessage': "I am a bold font from the context"}
     for category in category_list:
         category.url = category.name.replace(' ','_')
@@ -45,6 +48,7 @@ def about(request):
     context_dict = {'boldmessage': "blah blah blah", 'image_name': image_name, 
                     'visits': request.session.get('visits',0) }
     print context_dict
+    contest_dict['cat_list'] = get_category_list()
     return render_to_response('rango/about.html', context_dict, context)
 
 
@@ -52,6 +56,7 @@ def category(request, category_name_url):
     context = RequestContext(request)
     category_name = category_name_url.replace('_',' ')
     context_dict = {'category_name': category_name, 'category_name_url': category_name_url}
+    context_dict['cat_list'] = get_category_list()
     
     try:
         category = Category.objects.get(name=category_name)
@@ -76,10 +81,15 @@ def add_category(request):
     else:
         form = CategoryForm()
 
-    return render_to_response('rango/add_category.html',{'form': form}, context)
+    cat_list = get_category_list()
+    return render_to_response('rango/add_category.html',
+                 {'form': form, 'cat_list': cat_list}, context)
 
 def decode_url(url_name):
     return url_name.replace("_"," ")
+
+def encode_url(url_name):
+    return url_name.replace(" ","_")
 
 @login_required
 def add_page(request, category_name_url):
@@ -104,11 +114,14 @@ def add_page(request, category_name_url):
             print form.errors
     else:
         form = PageForm()
+    context_dict = {'category_name_url': category_name_url, 
+                    'category_name': category_name,
+                    'form': form,
+                    'cat_list': get_category_list,
+                   }
 
     return render_to_response('rango/add_page.html', 
-            {'category_name_url': category_name_url,
-             'category_name': category_name,
-             'form': form}, context)
+             context_dict, context)
              
     
 
@@ -134,6 +147,7 @@ def register(request):
     else:
         user_form = UserForm()
         profile_form = UserProfileForm()
+
     return render_to_response(
              'rango/register.html',
              {'user_form': user_form, 'profile_form': profile_form,
@@ -167,7 +181,13 @@ def user_login(request):
     else:
         return render_to_response('rango/login.html', context_dict, context)
 
+def get_category_list():
+    cat_list = Category.objects.all()
 
+    for cat in cat_list:
+        cat.url = encode_url(cat.name)
+
+    return cat_list
 @login_required
 def restricted(request):
     return HttpResponse("Since you are logged in you can see this")
@@ -177,3 +197,15 @@ def restricted(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/rango/')
+
+
+def search(request):
+    context = RequestContext(request)
+    result_list = []
+ 
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            result_list = run_query(query)
+
+    return render_to_response('rango/search.html', {'result_list': result_list}, context)
