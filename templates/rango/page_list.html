@@ -1,0 +1,8 @@
+<strong>Updated list</strong>
+<br/>
+<ul>
+{% for page in pages %}
+    <li><a href="/rango/goto/?page_id={{ page.id }}">{{ page.title }}</a></li>
+{% endfor %}
+</ul>
+

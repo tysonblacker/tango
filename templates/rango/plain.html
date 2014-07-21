@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+{% load static %}
+<html>
+<head>
+<script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>
+<script src="{% static 'js/rango-ajax.js' %}"></script>
+
+
+<script>
+$(document).ready(function(){
+  $("h2").click(function(){
+    $(this).hide();
+  });
+
+
+
+});
+</script>
+</head>
+<body>
+<h2> If you click me I will really disappear</h2>
+<p>If you click on me, I will disappear.</p>
+<p>Click me away!</p>
+<p>Click me too!</p>
+
+     <p>
+     
+     <div id="like_count">64</div> people like this category
+
+     {% if user.is_authenticated %} 
+        <button id="likes" data-catid="4"  type="button" >Like</button>
+     {% endif %}
+     </p>
+
+</body>
+</html>

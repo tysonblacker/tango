@@ -6,7 +6,7 @@
 
 {% block body_block %}
 <div class="hero-unit">
-    <h1>Search pages with Rango</h1>
+    <h1>Search with Rango</h1>
     <br/>
 
     <div class="container-fluid">
@@ -22,8 +22,10 @@
           <ol>
           {% for result in result_list %}
             <li>
-                 <strong><a href="{{ result.url }}">{{ result.title }}</a></strong>
-            </li>
+                 <strong><a href="{{ result.link }}">{{ result.title }}</a></strong>
+                 <br/>
+                 <em>{{ result.summary }}</em>
+             </li>
            {% endfor %}
            </ol>
          </div>

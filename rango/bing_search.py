@@ -2,7 +2,7 @@ import json
 import urllib, urllib2
 import sys
 
-def run_query(search_terms):
+def run_query_global(search_terms):
     # Specify the base
     root_url = 'https://api.datamarket.azure.com/Bing/Search/'
     """
@@ -23,7 +23,7 @@ def run_query(search_terms):
         offset,
         query)
 
-    print search_url
+    #print search_url
 
     #search_url = "https://api.datamarket.azure.com/Bing/Search/Web?Query=%27raspberry%20pi%27&$top=2&$format=json"
     print search_url
@@ -43,8 +43,8 @@ def run_query(search_terms):
 
         response = urllib2.urlopen(search_url).read()
 
-        print response
-        print "---------------------------------"
+        #print response
+        #print "---------------------------------"
         json_response = json.loads(response)
 
         for result in json_response['d']['results']:
@@ -71,7 +71,7 @@ def main(argv=None):
     else:
         q = "raspberry"
     """
-    print run_query(q)
+    print run_query_global(q)
 
 
 if __name__ == "__main__":

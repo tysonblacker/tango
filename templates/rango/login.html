@@ -11,9 +11,9 @@
         {% csrf_token %}
 
         {% if bad_details %}
-        <p><strong>Your username and/or password were incorrect!<strong></p>
+           <p><strong>Your username and/or password were incorrect!<strong></p>
         {% elif password_disabled %}
-        <p><strong>Your account is disabled! You cannot log in.<strong></p>
+           <p><strong>Your account is disabled! You cannot log in.<strong></p>
         {% endif %}
         Username: <input type="text" class="inpot-block-level" placeholder="Username" name="username" value="" size="50" />
         <br />
